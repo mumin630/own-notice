@@ -101,6 +101,7 @@ async def loop():
     now_date = datetime.now(JST).strftime('%Y/%m/%d')
     now_time = datetime.now(JST).strftime('%H:%M')
     now_week = datetime.now(JST).strftime('%a')
+    print(now_date + '(' + now_week + ') ' + now_time)
 
     # 10分単位で処理を行う
     if now_time[4] != '0':
@@ -116,7 +117,7 @@ async def loop():
     sql += "  1 = 1 "
     sql += "  AND time = '" + now_time + "' "
     sql += "  AND week = '" + now_week + "' "
-    sql += "  AND (date = ')" + now_date + "' "
+    sql += "  AND (date = '" + now_date + "' "
     sql += "      OR date IS NULL ) "
 
     cursor.execute(sql)
