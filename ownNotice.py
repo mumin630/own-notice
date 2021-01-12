@@ -1,4 +1,4 @@
-#coding:UTF-8
+# coding:UTF-8
 import discord
 import psycopg2
 import os
@@ -20,6 +20,7 @@ client = discord.Client()
 # タイムゾーンの設定
 JST = timezone(timedelta(hours=+9), 'JST')
 
+
 # メッセージ受信時に動作する処理
 @client.event
 async def on_message(message):
@@ -37,7 +38,7 @@ async def on_message(message):
     cursor = conn.cursor()
 
     # トリガーを取得する
-    sql =  "SELECT trigger, messageId FROM reply_trigger "
+    sql = "SELECT trigger, messageId FROM reply_trigger "
     sql += "ORDER BY priority"
 
     cursor.execute(sql)
@@ -53,7 +54,7 @@ async def on_message(message):
         if trigger in message.content:
 
             # メッセージを取得する
-            sql =  "SELECT message FROM reply_message "
+            sql = "SELECT message FROM reply_message "
             sql += "WHERE messageId = " + messageId + " "
 
             cursor.execute(sql)
@@ -73,7 +74,7 @@ async def on_message(message):
     if doReply is False:
 
         # メッセージを取得する
-        sql =  "SELECT message FROM reply_message "
+        sql = "SELECT message FROM reply_message "
         sql += "WHERE messageId = 0 "
 
         cursor.execute(sql)
@@ -89,6 +90,7 @@ async def on_message(message):
     # DBクローズ
     cursor.close()
     conn.close()
+
 
 # 60秒に一回ループ
 @tasks.loop(seconds=60)
@@ -112,7 +114,7 @@ async def loop():
     cursor = conn.cursor()
 
     # メッセージを取得する
-    sql =  "SELECT * FROM notice "
+    sql = "SELECT * FROM notice "
     sql += "WHERE "
     sql += "  1 = 1 "
     sql += "  AND time = '" + now_time + "' "
@@ -149,7 +151,7 @@ async def loop():
     cursor.close()
     conn.close()
 
-#ループ処理実行
+# ループ処理実行
 loop.start()
 
 # Botの起動とDiscordサーバーへの接続
