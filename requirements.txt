@@ -1,2 +1,5 @@
 discord.py
-psycopg2
+psycopg2-binary
+bs4
+lxml
+requests

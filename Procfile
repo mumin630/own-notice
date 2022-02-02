@@ -1,1 +1,1 @@
-own-notice: python3 ownNotice.py
+own-notice: python3 main.py
