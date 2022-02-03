@@ -1,32 +1,44 @@
 # coding:UTF-8
 
-import requests
-import random
-import bs4
-import ssl
-import urllib.parse
+import os
 
-ssl._create_default_https_context = ssl._create_unverified_context
+from googleapiclient.discovery import build
 
 
 class ImageSearchService():
 
+    # コンストラクタ
+    def __init__(self):
+        # 環境変数を取得する
+        self.googleApiKey = os.environ.get('GOOGLE_API_KEY')
+        self.customSearchEngineId = os.environ.get('CUSTOM_SEARCH_ENGINE_ID')
+
+        # Google画像検索のサービスを生成
+        self.service = build("customsearch", "v1",
+                             developerKey=self.googleApiKey)
+
     def searchImage(self, data):
 
-        # 検索対象の文字列をURLエンコードする
-        encodeData = urllib.parse.quote(data)
-        print(encodeData)
+        page_limit = 1
+        start_index = 1
+        response = []
+        for page in range(0, page_limit):
+            try:
+                response.append(self.service.cse().list(
+                    q=data,
+                    cx=self.customSearchEngineId,
+                    lr='lang_ja',
+                    num=1,
+                    start=start_index,
+                    searchType='image'
+                ).execute())
+                start_index = response[page].get("queries").get("nextPage")[
+                    0].get("startIndex")
+            except Exception as e:
+                print(e)
+                break
 
-        # Googleで検索する
-        response = requests.get("https://www.google.com/search?hl=jp&q=" +
-                                encodeData + "&btnG=Google+Search" +
-                                "&tbs=0&safe=off&tbm=isch")
+        imagePath = response[0]['items'][0]['link']
+        print(imagePath)
 
-        # HTMLからimgタグのsrc要素を抜き出す
-        soup = bs4.BeautifulSoup(response.text, 'lxml')
-        links = soup.find_all("img")
-        link = random.choice(links).get("src")
-
-        # 画像へのリンクを返却する
-        print(link)
-        return link
+        return imagePath
