@@ -1,6 +1,7 @@
 # coding:UTF-8
 
 import os
+import random
 
 from googleapiclient.discovery import build
 
@@ -17,28 +18,24 @@ class ImageSearchService():
         self.service = build("customsearch", "v1",
                              developerKey=self.googleApiKey)
 
+    # 画像を検索し、そのURLを返却する
     def searchImage(self, data):
 
-        page_limit = 1
-        start_index = 1
-        response = []
-        for page in range(0, page_limit):
-            try:
-                response.append(self.service.cse().list(
-                    q=data,
-                    cx=self.customSearchEngineId,
-                    lr='lang_ja',
-                    num=1,
-                    start=start_index,
-                    searchType='image'
-                ).execute())
-                start_index = response[page].get("queries").get("nextPage")[
-                    0].get("startIndex")
-            except Exception as e:
-                print(e)
-                break
+        # ランダムで検索するページを選択する
+        startIndex = int(random.random() * 3) * 10 + 1
 
-        imagePath = response[0]['items'][0]['link']
-        print(imagePath)
+        # 画像検索を行う
+        response = self.service.cse().list(
+            q=data,
+            cx=self.customSearchEngineId,
+            lr='lang_ja',
+            num=10,
+            start=startIndex,
+            searchType='image'
+        ).execute()
+
+        # ランダムで画像を選択する
+        index = int(random.random() * len(response['items']))
+        imagePath = response['items'][index]['link']
 
         return imagePath
