@@ -29,10 +29,10 @@ def main():
     discordService = DiscordService(client)
     # トークンを取得する
     token = os.environ.get('TOKEN_DISCORD_OWN_NOTICE')
-    # Botの起動とDiscordサーバーへの接続を行う
-    client.run(token)
     # 60秒に一回実行される処理の開始
     executeForOneMinute.start()
+    # Botの起動とDiscordサーバーへの接続を行う
+    client.run(token)
 
 
 # 処理を実行する

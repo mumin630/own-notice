@@ -45,6 +45,9 @@ class DiscordService():
             link = ImageSearchService().searchImage(searchWard)
 
             # メッセージを送信する
+            await message.channel.send('「' + searchWard + '」の画像です')
+
+            # 画像を送信する
             await message.channel.send(link)
             return
 
@@ -65,13 +68,29 @@ class DiscordService():
             connection = self.dataBaseService.connectionDataBase()
             # リマインド情報を取得する
             remindInfoList = self.dataBaseService.selectRemind(
-                connection, nowDate, nowTime, nowWeek)
+                connection, nowTime, nowWeek, nowDate)
             # データベースから切断する
             self.dataBaseService.disconnectDataBase(connection)
             # メッセージを送信する
             await self.sendRemind(remindInfoList)
 
-    # discordにリマインドを送信する
+        # 23時に実行される処理
+        if nowTime == '23:00':
+            # データベースに接続する
+            connection = self.dataBaseService.connectionDataBase()
+            # DBから画像検索用のキーワードを取得する
+            keyward = self.dataBaseService.selectImageSearchKeyward(connection)
+            # データベースから切断する
+            self.dataBaseService.disconnectDataBase(connection)
+            # 画像検索を行う
+            link = ImageSearchService().searchImage(keyward[0][0])
+            # チャンネルを設定
+            channel = self.client.get_channel(
+                int(os.environ.get('CHANNEL_DISCORD')))
+            # メッセージを送信する
+            await channel.send(link)
+
+            # discordにリマインドを送信する
     async def sendRemind(self, remindInfoList):
         # メッセージが取得できなかった場合は処理を行わない
         if len(remindInfoList) == 0:

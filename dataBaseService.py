@@ -70,5 +70,21 @@ class DataBaseService():
 
         cursor.close()
 
-        # リマインド情報のリストを返却する
         return remindInfoList
+
+    # DBから画像検索用のキーワードを取得する
+    def selectImageSearchKeyward(self, connection):
+
+        cursor = connection.cursor()
+
+        # DBからキーワードをランダムに1つ取得する
+        sql = "SELECT keyward FROM image_keyward "
+        sql += "ORDER BY random() "
+        sql += "LIMIT 1"
+
+        cursor.execute(sql)
+        keyward = cursor.fetchall()
+
+        cursor.close()
+
+        return keyward
