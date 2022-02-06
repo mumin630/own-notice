@@ -39,7 +39,7 @@ class DiscordService():
                     continue
                 # 3番目以降の場合、+を連結する
                 if index >= 3:
-                    searchWard += '+'
+                    searchWard += ' '
                 # 文字列を連結する
                 searchWard += string
             link = ImageSearchService().searchImage(searchWard)
